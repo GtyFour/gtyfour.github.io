@@ -1,1 +1,344 @@
-Hello World
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="google" value="notranslate">
+  <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=no, width=device-width,initial-scale=1.0" />
+  <title>MatataCode</title>
+  <link rel="stylesheet" href="style_code.css">
+<!--      <script type="text/javascript">-->
+<!--          function jsHandlerLoadcode(message) {-->
+<!--              var xml = Blockly.Xml.textToDom(message);-->
+<!--              Blockly.Xml.domToWorkspace(xml, Code.workspace);-->
+<!--              return "load finished"-->
+<!--          };-->
+<!--      </script>-->
+  <script src="appengine/storage.js"></script>
+  <script src="blockly_compressed.js"></script>
+  <script src="blocks_compressed.js"></script>
+  <script src="javascript_compressed.js"></script>
+<!--  <script src="php_compressed.js"></script>-->
+  <script src="python_compressed.js"></script>
+<!--  <script src="lua_compressed.js"></script>-->
+<!--  <script src="dart_compressed.js"></script>-->
+  <script src="code_code.js"></script>
+<!-- 新增的matata块 -->
+  <script src="blocks/led.js"></script>
+  <script src="blocks/motion.js"></script>
+  <script src="blocks/music.js"></script>
+  <script src="blocks/timer.js"></script>
+  <script src="blocks/value.js"></script>
+  <script src="blocks/loop.js"></script>
+  <script src="blocks/function.js"></script>
+<!--  针对新增matata块的编译器-->
+  <script src="generators/python/led.js"></script>
+  <script src="generators/python/motion.js"></script>
+  <script src="generators/python/music.js"></script>
+  <script src="generators/python/timer.js"></script>
+  <script src="generators/python/function.js"></script>
+  <script src="generators/python/value.js"></script>
+  <script src="generators/python/loop.js"></script>
+
+  <script src="generators/javascript/led.js"></script>
+  <script src="generators/javascript/motion.js"></script>
+  <script src="generators/javascript/music.js"></script>
+  <script src="generators/javascript/timer.js"></script>
+  <script src="generators/javascript/function.js"></script>
+  <script src="generators/javascript/value.js"></script>
+  <script src="generators/javascript/loop.js"></script>
+  
+</head>
+<body>
+  <table width="100%" height="100%">
+    <tr>
+      <td>
+        <h1 style="display:none;">
+          <span id="title">MatataCode</span>
+        </h1>
+      </td>
+<!--      <td class="farSide">-->
+<!--        <select style="display:none;" id="languageMenu"></select>-->
+<!--      </td>-->
+    </tr>
+    <tr>
+      <td colspan=2>
+        <table width="100%">
+          <tr id="tabRow" height="1em">
+            <td id="tab_blocks" style="display:none;"  class="tabon">Blocks</td>
+            <td class="tabmin">&nbsp;</td>
+            <td id="tab_python" style="display:none;" class="taboff">MatataCode</td>
+            <td class="tabmin">&nbsp;</td>
+            <td id="tab_javascript" style="display:none;" class="taboff">MatataCode</td>
+            <td class="tabmin">&nbsp;</td>
+            <td id="tab_xml"  style="display:none;" class="taboff">XML</td>
+<!--            <td class="tabmax">&nbsp;</td>-->
+            <td class="tabmin">
+                <button id="linkButton" style="display:none;" class="notext" title="...">
+                    <img src='media/1x1.gif' class="link icon21">
+                </button>
+              <button id="runButton" class="notext primary" title="RunCode">
+                <img src='media/1x1.gif' class="run icon21">
+              </button>
+            </td>
+            <td class="tabmin">
+                <button id="stopButton" class="notext" title="Stop">
+                    <img src='media/1x1.gif' class="trash icon21_3">
+                </button>
+            </td>
+            <td class="tabmin">
+                <button id="connectButton" class="notext secondary" title="Connect">
+                    <img src='media/1x1.gif' class="sensor icon21_2">
+                </button>
+            </td>
+<!--            <td class="tabmin">-->
+<!--                <button id="sensorButton" class="notext" title="Sensor">-->
+<!--                    <img src='media/1x1.gif' class="sensor icon21_2">-->
+<!--                </button>-->
+<!--            </td>-->
+            <td class="tabmin">
+                <button id="savecodeButton" class="notext" title="SaveCode">
+                    <img src='media/1x1.gif' class="savecode icon21_2">
+                </button>
+            </td>
+            <td class="tabmin">
+                <button id="loadcodeButton" class="notext" title="LoadCode">
+                    <img src='media/1x1.gif' class="loadcode icon21_2">
+                        </button>
+            </td>
+            <td class="tabmin">
+                <button id="deletecodeButton" class="notext" title="DeleteCode">
+                    <img src='media/1x1.gif' class="delete icon21_4">
+                        </button>
+            </td>
+            <td class="tabmin">
+                <button id="checkcodeButton" class="notext" title="CheckCode">
+                    <img src='media/1x1.gif' class="check icon21_4">
+                </button>
+            </td>
+            <td class="tabmin">
+                <button id="trashButton" class="notext" title="CleanUp">
+                    <img src='media/1x1.gif' class="trash icon21">
+                        </button>
+            </td>
+            <td class="tabmax"></td>
+            <td style="display:none;" class="tabmax">
+                <select id="languageMenu"></select>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td height="99%" colspan=2 id="content_area">
+      </td>
+    </tr>
+  </table>
+  <div id="content_blocks" class="content"></div>
+  <pre id="content_python" class="content"></pre>
+  <pre id="content_javascript" class="content"></pre>
+  <textarea id="content_xml" class="content" wrap="off"></textarea>
+
+  <xml xmlns="http://www.w3.org/1999/xhtml" id="toolbox" style="display: none;">
+      
+      <category name="MOTION" colour="#FF0000" style="color: #FF0000;">
+          <block type="motion_forward">
+              <field name="STEP">1</field>
+          </block>
+          <block type="motion_backward">
+              <field name="STEP">1</field>
+          </block>
+          <block type="motion_turnleft">
+              <field name="ANGLE">90degree</field>
+          </block>
+          <block type="motion_turnright">
+              <field name="ANGLE">90degree</field>
+          </block>
+          <block type="motion_do_action">
+              <field name="ACTION_LIST">action1</field>
+          </block>
+      </category>
+      <category name="LED" colour="#FFA500">
+<!--          <block type="led_left">-->
+<!--              <field name="LED">#ff0000</field>-->
+<!--          </block>-->
+<!--          <block type="led_right">-->
+<!--              <field name="LED">#ff0000</field>-->
+<!--          </block>-->
+<!--          <block type="led_both">-->
+<!--              <field name="LED">#ff0000</field>-->
+<!--          </block>-->
+          <block type="led_position_color_level">
+              <field name="EYE">0</field>
+              <field name="COLOR">1</field>
+              <field name="LEVEL">1</field>
+          </block>
+<!--          <block type="led_led">-->
+<!--              <field name="EYE">both</field>-->
+<!--              <field name="COLOR">#ff0000</field>-->
+<!--          </block>-->
+      </category>
+      <category name="MUSIC" colour="#FFFF00">
+          <block type="music_playsong">
+              <field name="MUSIC_LIST">music1</field>
+          </block>
+          <block type="music_do_dance">
+              <field name="DANCE_LIST">dance1</field>
+          </block>
+          <block type="music_alto">
+              <field name="TONE_LIST">do</field>
+              <field name="METER">meter1</field>
+          </block>
+          <block type="music_treble">
+              <field name="TONE_LIST">do</field>
+              <field name="METER">meter1</field>
+          </block>
+          <block type="music_playmelody">
+              <field name="MELODY_LIST">melody1</field>
+          </block>
+      </category>
+      <category name="LOGIC" colour="#00FF00">
+          <block type="timer_wait">
+              <field name="SECOND">1</field>
+          </block>
+          <block type="controls_repeat_ext">
+              <value name="TIMES">
+                  <shadow type="math_number">
+                      <field name="NUM">10</field>
+                  </shadow>
+              </value>
+          </block>
+          <block type="controls_whileUntil"></block>
+          <block type="controls_for">
+              <value name="FROM">
+                  <shadow type="math_number">
+                      <field name="NUM">1</field>
+                  </shadow>
+              </value>
+              <value name="TO">
+                  <shadow type="math_number">
+                      <field name="NUM">10</field>
+                  </shadow>
+              </value>
+              <value name="BY">
+                  <shadow type="math_number">
+                      <field name="NUM">1</field>
+                  </shadow>
+              </value>
+          </block>
+          <block type="controls_flow_statements"></block>
+          <block type="controls_if"></block>
+          <block type="logic_operation"></block>
+          <block type="logic_negate"></block>
+          <block type="logic_boolean"></block>
+          <block type="logic_compare">
+              <field name="OP">LT</field>
+          </block>
+      </category>
+      <category name="NUMBER" colour="#007FFF">
+          <block type="math_number">
+              <field name="NUM">1</field>
+          </block>
+          <block type="math_number_property">
+              <value name="NUMBER_TO_CHECK">
+                  <shadow type="math_number">
+                      <field name="NUM">0</field>
+                  </shadow>
+              </value>
+          </block>
+          <block type="math_modulo">
+              <value name="DIVIDEND">
+                  <shadow type="math_number">
+                      <field name="NUM">64</field>
+                  </shadow>
+              </value>
+              <value name="DIVISOR">
+                  <shadow type="math_number">
+                      <field name="NUM">10</field>
+                  </shadow>
+              </value>
+          </block>
+          <block type="math_constrain">
+              <value name="VALUE">
+                  <shadow type="math_number">
+                      <field name="NUM">50</field>
+                  </shadow>
+              </value>
+              <value name="LOW">
+                  <shadow type="math_number">
+                      <field name="NUM">1</field>
+                  </shadow>
+              </value>
+              <value name="HIGH">
+                  <shadow type="math_number">
+                      <field name="NUM">100</field>
+                  </shadow>
+              </value>
+          </block>
+          <block type="math_arithmetic">
+              <field name="OP">ADD</field>
+              <value name="A">
+                  <shadow type="math_number">
+                      <field name="NUM">1</field>
+                  </shadow>
+              </value>
+              <value name="B">
+                  <shadow type="math_number">
+                      <field name="NUM">1</field>
+                  </shadow>
+              </value>
+          </block>
+          <block type="math_random_int">
+              <value name="FROM">
+                  <shadow type="math_number">
+                      <field name="NUM">1</field>
+                  </shadow>
+              </value>
+              <value name="TO">
+                  <shadow type="math_number">
+                      <field name="NUM">10</field>
+                  </shadow>
+              </value>
+          </block>
+      </category>
+      <category name="OPTIMIZE" colour="#0000FF">
+          <block type="motion_right_optimize">
+              <field name="ANGLE">90degree</field>
+              <value name="NAME">
+                  <shadow type="logic_boolean">
+                      <field name="BOOL">TRUE</field>
+                  </shadow>
+              </value>
+          </block>
+          <block type="motion_left_optimize">
+              <field name="ANGLE">90degree</field>
+              <value name="NAME">
+                  <shadow type="logic_boolean">
+                      <field name="BOOL">TRUE</field>
+                  </shadow>
+              </value>
+          </block>
+          <block type="motion_straight_optimize">
+              <value name="NAME">
+                  <shadow type="logic_boolean">
+                      <field name="BOOL">TRUE</field>
+                  </shadow>
+              </value>
+          </block>
+      </category>
+      <category name="VARIABLES" colour="#A65C81" custom="VARIABLE"></category>
+      <category name="FUNCTIONS" colour="#9A5CA6" custom="PROCEDURE"></category>
+      
+  </xml>
+  
+</body>
+</html>
+
+<!--备份自制compress
+ 
+ Blockly.Blocks.motion={};Blockly.Constants.Motion={};Blockly.Constants.Motion.HUE=195;
+ 
+ Blockly.Blocks.led={};Blockly.Constants.Led={};Blockly.Constants.Led.HUE=122;
+ Blockly.defineBlocksWithJsonArray([{type:"led_left",message0:"Left eye show color %1",args0:[{type:"field_colour",name:"LED",colour:"#ff0000"}],previousStatement: null,nextStatement:null,colour:"%{BKY_LED_HUE}",tooltip:"",helpUrl:""},{type:"led_right",message0:"Right eye show color %1",args0:[{type:"field_colour",name:"LED",colour:"#ff0000"}],previousStatement:null,nextStatement:null,colour:"%{BKY_LED_HUE}",tooltip:"",helpUrl:""},{type:"led_both",message0:"[!!THIS BLOCK ONLY RUN SOLO!!]Both eye show color %1",args0:[{type:"field_colour",name:"LED",colour:"#ff0000"}],previousStatement:null,nextStatement:null,colour:"%{BKY_LED_HUE}",tooltip:"",helpUrl:""},{type:"led_led",message0:"%1 eye show color %2",args0:[{type:"field_dropdown",name:"EYE",options:[["Left","left"],["Right","right"],["Both","both"]]},{type:"field_colour",name:"COLOR",colour:"#ff0000"}],previousStatement:null,nextStatement:null,colour:"%{BKY_LED_HUE}",tooltip:"",helpUrl:""},
+ {type:"led_position_color_level",message0:"%1 eye show color %2 at level %3",args0:[{type:"field_dropdown",name:"EYE",options:[["Left","1"],["Right","2"],["Both","0"]]},{type:"field_dropdown",name:"COLOR",options:[[{src:"http://193.112.211.120/download/color/white.png",width:16,height:16,alt:"White"},"1"],[{src:"http://193.112.211.120/download/color/red.png",width:16,height:16,alt:"Red"},"2"],[{src:"http://193.112.211.120/download/color/yellow.png",width:16,height:16,alt:"Yellow"},"3"],[{src:"http://193.112.211.120/download/color/green.png",width:16,height:16,alt:"Green"},"4"],[{src:"http://193.112.211.120/download/color/blue.png",width:16,height:16,alt:"Blue"},"5"],[{src:"http://193.112.211.120/download/color/purple.png",width:16,height:16,alt:"Purple"},"6"],[{src:"http://193.112.211.120/download/color/black.png",width:16,height:16,alt:"Black"},"7"]},{type:"field_dropdown",name:"LEVEL",options:[["1","1"],["2","2"],["3","3"],["4","4"],["5","5"],["6","6"]]}],previousStatement:null,nextStatement:null,colour:"%{BKY_LED_HUE}",tooltip:"",helpUrl:""}]);
+ Blockly.Blocks.music={};Blockly.Constants.Music={};Blockly.Constants.Music.HUE=300;
+ Blockly.Blocks.timer={};Blockly.Constants.Timer={};Blockly.Constants.Timer.HUE=40;-->
